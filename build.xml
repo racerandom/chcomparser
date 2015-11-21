@@ -1,0 +1,34 @@
+<project default="compile">
+    <target name="clean">
+    	<delete dir="bin"/>
+    </target>
+
+    <target name="compile" depends="clean">
+		<mkdir dir="bin"/>
+		<javac srcdir="src" destdir="bin" includeantruntime="false" debug="true">
+	    	<classpath>
+            	<pathelement path="libs/trove.jar"/>
+	    		<pathelement path="libs/commons-lang3-3.3.1.jar"/>
+	        </classpath>
+		</javac>
+    </target>
+
+    <target name="parse" depends="compile">
+	<java classname="mstparser.DependencyParser" fork="true" maxmemory="6G">
+	    <classpath>
+		    <pathelement path="bin"/>
+            <pathelement path="libs/trove.jar"/>
+	    	<pathelement path="libs/commons-lang3-3.3.1.jar"/>
+	    </classpath>
+	    <arg value="train"/>
+	    <arg value="train-file:data/tmp/train0"/>
+            <arg value="model-name:model/dep.model"/>
+	    <arg value="test"/>
+            <arg value="test-file:data/tmp/test0"/>
+            <arg value="output-file:data/tmp/output0"/>
+            <arg value="eval"/>
+            <arg value="gold-file:data/tmp/test0"/>
+        </java>
+    </target>
+
+</project>
