@@ -3,3 +3,5 @@ bin/
 feats/
 .settings/
 data/tmp/output*
+.classpath
+.project
