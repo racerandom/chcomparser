@@ -1,6 +1,5 @@
 model/
 bin/
-feats/
 .settings/
 data/tmp/output*
 .classpath
