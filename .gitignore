@@ -1,4 +1,5 @@
-model/*
-bin/*
-feats/*
-.settings/*
+model/
+bin/
+feats/
+.settings/
+data/tmp/output*
