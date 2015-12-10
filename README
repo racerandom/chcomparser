@@ -1,0 +1,10 @@
+A internal structure parser for Chinese synthetic words
+=======================================================
+
+This is a graph-based internal structure parser for Chinese synthetic words.
+(http://www.lrec-conf.org/proceedings/lrec2014/pdf/96_Paper.pdf)
+
+The users can incorporate additional features by editing 'src/mstparser/DependencyPipe.java'.
+
+
+
