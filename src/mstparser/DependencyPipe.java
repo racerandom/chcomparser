@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,18 +51,12 @@ public class DependencyPipe {
 	private THashMap charClusters = null;
 	
 	private THashMap vecClusters = null;
-	
-<<<<<<< HEAD
+
 	public boolean isAVFeat = false;
 	
 	public boolean isAVClass = true;
 	
 	public boolean isAVMin = true;
-=======
-	public boolean isAVFeat = true;
-	
-	public boolean isAVClass = true;
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 	public boolean isDictFeat = false;
 	
@@ -91,17 +82,10 @@ public class DependencyPipe {
 				options.discourseMode);
 
 		// @kevin
-<<<<<<< HEAD
 		String avFeatFile = "feats/xincmn_avfeats.out";
 //		String clusterFeatFile = "/home/fei-c/resource/chgigaword/gigaword_class.txt";
 		String dictFile = "dicts/mecab-dic.csv";
 		String vecclusterFile = "feats/xincmn_k100.sorted";
-=======
-		String avFeatFile = "/home/fei-c/resource/chgigaword/xincmn_avfeats.out";
-		String clusterFeatFile = "/home/fei-c/resource/chgigaword/gigaword_class.txt";
-		String dictFile = "dicts/mecab-dic.csv";
-		String vecclusterFile = "/home/fei-c/resource/chgigaword/xincmn_k100.sorted";
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 		if (isAVFeat == true) {
 			setAvReMap(avFeatFile);
@@ -268,13 +252,7 @@ public class DependencyPipe {
 	public String getVecClusterFeat(String token) {
 		String[] toks = token.split(" ");
 		String retoken = StringUtils.join(toks);
-<<<<<<< HEAD
 		if (vecClusters.containsKey(retoken)) {
-=======
-//		System.out.println(retoken);
-		if (vecClusters.containsKey(retoken)) {
-//			System.out.println(retoken);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 			return (String)vecClusters.get(token);
 		} else
 			return "N";
@@ -313,19 +291,11 @@ public class DependencyPipe {
 	}
 	
 	public List<String> getPosFeat(String s) {
-<<<<<<< HEAD
 		if (posMap.containsKey(s)) {
 			return (List<String>)posMap.get(s);
 		} else
 //			return null;
 			return Arrays.asList("<N>");
-=======
-
-		if (posMap.containsKey(s)) {
-			return (List<String>)posMap.get(s);
-		} else
-			return null;
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	}
 	
 	public int getAvLeft(String token) {
@@ -334,11 +304,7 @@ public class DependencyPipe {
 			int[] value = (int[])this.avReMap.get(tok_space);
 			return value[0];
 		}else
-<<<<<<< HEAD
 			return -1;
-=======
-			return 0;
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	}
 	
 	public int getAvRight(String token) {
@@ -347,11 +313,7 @@ public class DependencyPipe {
 			int[] value = (int[])this.avReMap.get(tok_space);
 			return value[1];
 		}else
-<<<<<<< HEAD
 			return -1;
-=======
-			return 0;
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	}
 	
 	public int getAvCommon(String tok_space) {
@@ -361,11 +323,7 @@ public class DependencyPipe {
 			return Math.min(value[0], value[1]);
 //			System.out.print(result);
 		}else
-<<<<<<< HEAD
 			return -1;
-=======
-			return 0;
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	}
 
 	public static String joinString(String word, String delimiter) {
@@ -575,7 +533,6 @@ public class DependencyPipe {
 	
 	public void addCustomUnlabelFeats(String[] forms, int childIndex,
 			int headIndex, String suffix, FeatureVector fv) {
-<<<<<<< HEAD
 		
 		boolean isLabeled = false;
 		String symbol = "U";
@@ -793,136 +750,10 @@ public class DependencyPipe {
 		}else{
 			for (int i = 0; i < featList.size(); i++) {
 				feat = new StringBuilder("F" + symbol + ":" + i + ":" + featList.get(i));
-=======
-		String startTag = "<P>";
-		String endTag = "</P>";
-		String midTag = "<M>";
-
-		String c = forms[childIndex];
-		String h = forms[headIndex];
-		String cm1 = childIndex > 0 ? forms[childIndex - 1] : startTag;
-		String cm2 = childIndex > 1 ? forms[childIndex - 2] : startTag;
-		String cm3 = childIndex > 2 ? forms[childIndex - 3] : startTag;
-		String cm4 = childIndex > 3 ? forms[childIndex - 4] : startTag;
-		String hp1 = headIndex < forms.length - 1 ? forms[headIndex + 1] : endTag;
-		String hp2 = headIndex < forms.length - 2 ? forms[headIndex + 2] : endTag;
-		String hp3 = headIndex < forms.length - 3 ? forms[headIndex + 3] : endTag;
-		String hp4 = headIndex < forms.length - 4 ? forms[headIndex + 4] : endTag;
-		// String cp1 = childIndex < forms.length - 1 ? forms[childIndex + 1] :
-		// endTag;
-		// String cp2 = childIndex < forms.length - 2 ? forms[childIndex + 2] :
-		// endTag;
-		// String cp3 = childIndex < forms.length - 3 ? forms[childIndex + 3] :
-		// endTag;
-		String cp1 = childIndex < headIndex - 1 ? forms[childIndex + 1] : midTag;
-		String cp2 = childIndex < headIndex - 2 ? forms[childIndex + 2] : midTag;
-		String cp3 = childIndex < headIndex - 3 ? forms[childIndex + 3] : midTag;
-		String cp4 = childIndex < headIndex - 4 ? forms[childIndex + 4] : midTag;
-		// String hm1 = headIndex > 0 ? forms[headIndex - 1] : startTag;
-		// String hm2 = headIndex > 1 ? forms[headIndex - 2] : startTag;
-		// String hm3 = headIndex > 2 ? forms[headIndex - 3] : startTag;
-		String hm1 = headIndex > childIndex + 1 ? forms[headIndex - 1] : midTag;
-		String hm2 = headIndex > childIndex + 2 ? forms[headIndex - 2] : midTag;
-		String hm3 = headIndex > childIndex + 3 ? forms[headIndex - 3] : midTag;
-		String hm4 = headIndex > childIndex + 4 ? forms[headIndex - 4] : midTag;
-
-		List<String> featList = new ArrayList<String>();
-		
-		// child local feats
-		featList.add(cm1 + " " + c);
-		featList.add(c + " " + cp1);
-		featList.add(cm2 + " " + cm1);
-		featList.add(cp1 + " " + cp2);
-		featList.add(cm2 + " " + cm1 + " " + c);
-		featList.add(cm1 + " " + c + " " + cp1);
-		featList.add(c + " " + cp1 + " " + cp2);
-		featList.add(cm3 + " " + cm2 + " " + cm1);
-		featList.add(cp1 + " " + cp2 + " " + cp3);
-		featList.add(cm3 + " " + cm2 + " " + cm1 + " " + c);
-		featList.add(cm2 + " " + cm1 + " " + c + " " + cp1);
-		featList.add(cm1 + " " + c + " " + cp1 + " " + cp2);
-		featList.add(c + " " + cp1 + " " + cp2 + " " + cp3);
-		featList.add(cm4 + " " + cm3 + " " + cm2 + " " + cm1);
-		featList.add(cp1 + " " + cp2 + " " + cp3 + " " + cp4);
-		
-		
-		// head local feats
-		featList.add(hm1 + " " + h);
-		featList.add(h + " " + hp1);
-		featList.add(hm2 + " " + hm1);
-		featList.add(hp1 + " " + hp2);
-		featList.add(hm2 + " " + hm1 + " " + h);
-		featList.add(hm1 + " " + h + " " + hp1);
-		featList.add(h + " " + hp1 + " " + hp2);
-		featList.add(hm3 + " " + hm2 + " " + hm1);
-		featList.add(hp1 + " " + hp2 + " " + hp3);
-		featList.add(h + " " + hp1 + " " + hp2 + " " + hp3);
-		featList.add(hm3 + " " + hm2 + " " + hm1 + " " + h);
-		featList.add(hm1 + " " + h + " " + hp1 + " " + hp2);
-		featList.add(hm2 + " " + hm1 + " " + h + " " + hp1);
-		featList.add(hm4 + " " + hm3 + " " + hm2 + " " + hm1);
-		featList.add(hp1 + " " + hp2 + " " + hp3 + " " + hp4);
-		
-		//head and child
-		featList.add(c + " " + h);
-		featList.add(c + " " + hm1 + " " + h);
-		featList.add(cm1 + " " + c + " " + h);
-		featList.add(cm2 + " " + cm1 + " " + c + " " + h);
-		featList.add(cm1 + " " + c + " " + hm1 + " " + h);
-		featList.add(c + " " + hm2 + " " + hm1 + " " + h);
-		featList.add(cm2 + " " + cm1 + " " + c + " " + hm1 + " " + h);
-		featList.add(cm1 + " " + c + " " + hm2 + " " + hm1 + " " + h);
-		featList.add(cm2 + " " + cm1 + " " + c + " " + hm2 + " " + hm1 + " " + h);
-		
-//		featList.add(c + " " + h + " " + hp1);
-//		featList.add(c + " " + cp1 + " " + h);
-//		featList.add(c + " " + hm1 + " " + h + " " + hp1);
-//		featList.add(cm1 + " " + c + " " + h + " " + hp1);
-//		featList.add(c + " " + h + " " + hp1 + " " + hp2);
-//		featList.add(cm1 + " " + c + " " + cp1 + " " + h + " " + hp1);
-//		featList.add(cm1 + " " + c + " " + cp1 + " " + hm1 + " " + h);
-//		featList.add(cm1 + " " + c + " " + hm1 + " " + h + " " + hp1);
-//		featList.add(c + " " + cp1 + " " + hm1 + " " + h + " " + hp1);
-//		featList.add(cm1 + " " + c + " " + cp1 + " " + hm1 + " " + h + " " + hp1);
-		
-		StringBuilder feat = null;
-		
-		if (isAffixFeat == true){
-			feat = new StringBuilder("uhs:" + this.getSuffixFeature(h));
-			add(feat.toString(), fv);
-			feat.append(":").append(suffix);
-			add(feat.toString(), fv);
-			
-			feat = new StringBuilder("uhp:" + this.getPrefixFeature(h));
-			add(feat.toString(), fv);
-			feat.append(":").append(suffix);
-			add(feat.toString(), fv);
-			
-			feat = new StringBuilder("ucs:" + this.getSuffixFeature(c));
-			add(feat.toString(), fv);
-			feat.append(":").append(suffix);
-			add(feat.toString(), fv);
-			
-			feat = new StringBuilder("ucp:" + this.getPrefixFeature(c));
-			add(feat.toString(), fv);
-			feat.append(":").append(suffix);
-			add(feat.toString(), fv);
-		}
-		
-
-		for (int i = 0; i < featList.size(); i++) {
-			feat = new StringBuilder("FORM" + ":" + i + ":" + featList.get(i));
-			add(feat.toString(), fv);
-			feat.append(":").append(suffix);
-			add(feat.toString(), fv);
-			if (isClusterFeat == true) {
-				feat = new StringBuilder("CLU:" + i + ":" + getVecClusterFeat(featList.get(i)));
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 				add(feat.toString(), fv);
 				feat.append(":").append(suffix);
 				add(feat.toString(), fv);
 			}
-<<<<<<< HEAD
 		}
 	}
 	
@@ -1001,47 +832,10 @@ public class DependencyPipe {
 					List<String> results = getPosFeat(splitSpace(featList.get(i)));
 					for (String re : results){
 						feat = new StringBuilder("P" + symbol + ":" + i + ":" + re);
-=======
-			if (isAVFeat == true) {
-				int temp = getAvCommon(featList.get(i));
-				if (temp >= 0){
-					// class way
-					if (isAVClass == true){
-						feat = new StringBuilder("AV:" + i + ':' + temp);
-						add(feat.toString(), fv);
-						feat.append(':').append(suffix);
-						add(feat.toString(), fv);
-					}else{
-						// value way
-						feat = new StringBuilder("AV:" + i );
-						add(feat.toString(), 1 + (float)temp / 10, fv);
-						feat.append(":").append(suffix);
-						add(feat.toString(), 1 + (float)temp / 10, fv);
-					}
-					
-					
-
-				}
-			}
-			if (isDictFeat == true) {
-				feat = new StringBuilder("DIC" + ":" + i + ":" + getDicFeat(splitSpace(featList.get(i))));
-				add(feat.toString(), fv);
-				feat.append(":").append(suffix);
-				add(feat.toString(), fv);
-			}
-			if (isPosFeat == true) {
-				List<String> results = getPosFeat(splitSpace(featList.get(i)));
-				if (results != null){
-					for (String re : results){
-//						System.out.print(re + " : ");
-						feat = new StringBuilder("POS" + ":" + i + ":" + re);
-//						System.out.println(feat);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 						add(feat.toString(), fv);
 						feat.append(":").append(suffix);
 						add(feat.toString(), fv);
 					}
-<<<<<<< HEAD
 						//					System.out.println();
 					
 				}
@@ -1089,55 +883,11 @@ public class DependencyPipe {
 					add(feat.toString(), fv);
 					
 					feat = new StringBuilder("DD" + symbol + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])) + ":" + suffix);
-=======
-//					System.out.println();
-				}
-			}
-		}
-		
-		if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
-			featList = new ArrayList<String>();
-			featList.add(cm1 + " " + c + "\t" + hm1 + " " + h);
-			featList.add(cm2 + " " + cm1 + " " + c + "\t" + hm1 + " " + h);
-			featList.add(cm1 + " " + c + "\t" + hm2 + " " + hm1 + " " + h);
-			featList.add(cm2 + " " + cm1 + " " + c + "\t" + hm2 + " " + hm1 + " " + h);
-			
-			for (int i = 0; i < featList.size(); i++){
-	//			System.out.println(featList.get(i));
-				String[] feats = featList.get(i).split("\t");
-				if (isAVFeat == true) {
-					int temp = getAvCommon(feats[0]);
-					int temp1 = getAvCommon(feats[1]);
-					if (temp >= 0 || temp1 >= 0){
-						if (isAVClass == true){
-							// class way
-							feat = new StringBuilder("AVD:" + i + ":" + Math.min(temp, temp1));
-							add(feat.toString(), fv);
-							feat.append(":").append(suffix);
-							add(feat.toString(), fv);
-						}else{
-							// value way
-							feat = new StringBuilder("AVD" + ":" + i);
-							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
-							feat.append(":").append(suffix);
-							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
-						}
-						
-						
-						
-					}
-				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("DICD" + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])));
-					add(feat.toString(), fv);
-					feat.append(":").append(suffix);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 					add(feat.toString(), fv);
 				}
 				if (isPosFeat == true) {
 					List<String> results1 = getPosFeat(splitSpace(feats[0]));
 					List<String> results2 = getPosFeat(splitSpace(feats[1]));
-<<<<<<< HEAD
 					
 					feat = new StringBuilder("PF" + symbol + ":" + i + ":" + getPosFeat(splitSpace(refeat)) + ":" + suffix);
 					add(feat.toString(), fv);
@@ -1180,34 +930,11 @@ public class DependencyPipe {
 								add(feat.toString(), fv);
 								
 								feat = new StringBuilder("AD" + symbol + ":" + i + ":" + temp + " " + temp1);
-=======
-					if (results1 != null){
-						for (String re1 : results1){
-							if (results2 != null){
-								for (String re2 : results2){
-									feat = new StringBuilder("POSD" + ":" + i + ":" + re1  + "-" + re2);
-									add(feat.toString(), fv);
-									feat.append(":").append(suffix);
-									add(feat.toString(), fv);
-								}
-							}else{
-								feat = new StringBuilder("POSD" + ":" + i + ":" + re1  + "-" + "null");
-								add(feat.toString(), fv);
-								feat.append(":").append(suffix);
-								add(feat.toString(), fv);
-							}
-						}
-					}else{
-						if (results2 != null){
-							for (String re2 : results2){
-								feat = new StringBuilder("POSD" + ":" + i + ":" + "null" + "-" + re2);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 								add(feat.toString(), fv);
 								feat.append(":").append(suffix);
 								add(feat.toString(), fv);
 							}
 						}else{
-<<<<<<< HEAD
 							// value way
 							feat = new StringBuilder("AD" + symbol + ":" + i);
 							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
@@ -1239,15 +966,11 @@ public class DependencyPipe {
 					for (String re1 : results1){
 						for (String re2 : results2){
 							feat = new StringBuilder("PD" + symbol + ":" + i + ":" + re1  + "-" + re2);
-=======
-							feat = new StringBuilder("POSD" + ":" + i + ":" + "null" + "-" + "null");
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 							add(feat.toString(), fv);
 							feat.append(":").append(suffix);
 							add(feat.toString(), fv);
 						}
 					}
-<<<<<<< HEAD
 				}
 			}
 		}
@@ -1347,259 +1070,14 @@ public class DependencyPipe {
 							String re = re1 + " " + re2 + " " + re3;
 							add("PS" + symbol + ":" + i + ":" + re + "_" + dir, 1.0, fv);
 							add("PS" + symbol + ":" + i + ":" + re, 1.0, fv);
-=======
-					
-					
-	//				feat = new StringBuilder("POSD" + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])));
-	//				add(feat.toString(), fv);
-	//				feat.append(":").append(suffix);
-	//				add(feat.toString(), fv);
-				}
-			}
-		}
-		
-	}
 
-	public void addCustomlabelFeats(String[] forms, int[] heads, int word,
-			String suffix, FeatureVector fv) {
-
-		String startTag = "<P>";
-		String endTag = "</P>";
-		String midTag = "<M>";
-		
-//		String rootFeat = ( word == forms.length - 1) ? "isRoot" : "notRoot";
-//		add(rootFeat, fv);
-		
-//		if ( word == forms.length - 1 )
-//			System.out.println(forms.length + " : " + word + " : " + forms[word]);
-//		
-//		for (int i = 0; i < forms.length; i++){
-//			System.out.print(forms[i] + " ");
-//		}
-//		System.out.println("");
-//		System.out.println(word + " : " + forms[word]);
-		
-		int head = heads[word];
-		if (head >= 0 && head < forms.length) {
-			String w = forms[word];
-			String wm1 = word > 0 ? forms[word - 1] : startTag;
-			String wm2 = word > 1 ? forms[word - 2] : startTag;
-			String wm3 = word > 2 ? forms[word - 3] : startTag;
-			String wm4 = word > 3 ? forms[word - 4] : startTag;
-			// String wp1 = word < forms.length - 1 ? forms[word + 1] : "</s>";
-			// String wp2 = word < forms.length - 2 ? forms[word + 2] : "</s>";
-			// String wp3 = word < forms.length - 3 ? forms[word + 3] : "</s>";
-			String wp1 = word < head - 1 ? forms[word + 1] : midTag;
-			String wp2 = word < head - 2 ? forms[word + 2] : midTag;
-			String wp3 = word < head - 3 ? forms[word + 3] : midTag;
-			String wp4 = word < head - 4 ? forms[word + 4] : midTag;
-
-			String h = forms[head];
-			// String hm1 = head > 0 ? forms[head - 1] : "<s>";
-			// String hm2 = head > 1 ? forms[head - 2] : "<s>";
-			// String hm3 = head > 2 ? forms[head - 3] : "<s>";
-			String hm1 = head > word + 1 ? forms[head - 1] : midTag;
-			String hm2 = head > word + 2 ? forms[head - 2] : midTag;
-			String hm3 = head > word + 3 ? forms[head - 3] : midTag;
-			String hm4 = head > word + 4 ? forms[head - 4] : midTag;
-			String hp1 = head < forms.length - 1 ? forms[head + 1] : endTag;
-			String hp2 = head < forms.length - 2 ? forms[head + 2] : endTag;
-			String hp3 = head < forms.length - 3 ? forms[head + 3] : endTag;
-			String hp4 = head < forms.length - 4 ? forms[head + 4] : endTag;
-
-			// System.out.println(head + ":" + h);
-
-			List<String> featList = new ArrayList<String>();
-			
-			// word local feats
-			featList.add(w + " " + wp1);
-			featList.add(wm1 + " " + w);
-			featList.add(wm2 + " " + wm1);
-			featList.add(wp1 + " " + wp2);
-			featList.add(wm1 + " " + w + " " + wp1);
-			featList.add(wm2 + " " + wm1 + " " + w);
-			featList.add(w + " " + wp1 + " " + wp2);
-			featList.add(wm3 + " " + wm2 + " " + wm1);
-			featList.add(wp1 + " " + wp2 + " " + wp3);
-			featList.add(wm3 + " " + wm2 + " " + wm1 + " " + w);
-			featList.add(wm2 + " " + wm1 + " " + w + " " + wp1);
-			featList.add(wm1 + " " + w + " " + wp1 + " " + wp2);
-			featList.add(w + " " + wp1 + " " + wp2 + " " + wp3);
-			featList.add(wm4 + " " + wm3 + " " + wm2 + " " + wm1);
-			featList.add(wp1 + " " + wp2 + " " + wp3 + " " + wp4);
-			
-			// head local feats
-			featList.add(h + " " + hp1);
-			featList.add(hm1 + " " + h);
-			featList.add(hm2 + " " + hm1);
-			featList.add(hp1 + " " + hp2);
-			featList.add(hm1 + " " + h + " " + hp1);
-			featList.add(hm2 + " " + hm1 + " " + h);
-			featList.add(h + " " + hp1 + " " + hp2);
-			featList.add(hm3 + " " + hm2 + " " + hm1);
-			featList.add(hp1 + " " + hp2 + " " + hp3);
-			featList.add(hm3 + " " + hm2 + " " + hm1 + " " + h);
-			featList.add(hm2 + " " + hm1 + " " + h + " " + hp1);
-			featList.add(hm1 + " " + h + " " + hp1 + " " + hp2);
-			featList.add(h + " " + hp1 + " " + hp2 + " " + hp3);
-			featList.add(hm4 + " " + hm3 + " " + hm2 + " " + hm1);
-			featList.add(hp1 + " " + hp2 + " " + hp3 + " " + hp4);
-			
-			// word combine head
-			featList.add(w + " " + h);
-			featList.add(w + " " + hm1 + " " + h);
-			featList.add(wm1 + " " + w + " " + h);
-			featList.add(wm2 + " " + wm1 + " " + w + " " + h);
-			featList.add(wm1 + " " + w + " " + hm1 + " " + h);
-			featList.add(w + " " + hm2 + " " + hm1 + " " + h);
-			featList.add(wm2 + " " + wm1 + " " + w + " " + hm1 + " " + h);
-			featList.add(wm1 + " " + w + " " + hm2 + " " + hm1 + " " + h);
-			featList.add(wm2 + " " + wm1 + " " + w + " " + hm2 + " " + hm1 + " " + h);
-			
-//			featList.add(w + " " + wp1 + " " + h);
-//			featList.add(w + " " + hm1 + " " + h + " " + hp1);
-//			featList.add(w + " " + wp1 + " " + h + " " + hp1);
-//			featList.add(wm1 + " " + w + " " + wp1 + " " + h + " " + hp1);
-//			featList.add(wm1 + " " + w + " " + wp1 + " " + hm1 + " " + h);
-//			featList.add(wm1 + " " + w + " " + hm1 + " " + h + " " + hp1);
-//			featList.add(w + " " + wp1 + " " + hm1 + " " + h + " " + hp1);
-//			featList.add(wm1 + " " + w + " " + wp1 + " " + hm1 + " " + h + " " + hp1);
-			
-			StringBuilder feat = null;
-			
-			if (isAffixFeat == true){
-				feat = new StringBuilder("uhs:" + this.getSuffixFeature(h) + ":" + suffix);
-				add(feat.toString(), fv);
-				
-				feat = new StringBuilder("uhp:" + this.getPrefixFeature(h) + ":" + suffix);
-				add(feat.toString(), fv);
-				
-				feat = new StringBuilder("ucs:" + this.getSuffixFeature(w) + ":" + suffix);
-				add(feat.toString(), fv);
-				
-				feat = new StringBuilder("ucp:" + this.getPrefixFeature(w) + ":" + suffix);
-				add(feat.toString(), fv);
-			}
-			
-//			if (isClusterFeat == true) {
-//				feat = new StringBuilder("clul:ch" + this.getCharClusterFeat(w) + ":" + this.getCharClusterFeat(h) + ":" + suffix);
-//				add(feat.toString(), fv);
-//				
-//			}
-			
-			for (int i = 0; i < featList.size(); i++) {
-				feat = new StringBuilder("FORML" + ":" + i + ":" + featList.get(i) + ":" + suffix);
-				add(feat.toString(), fv);
-				if (isClusterFeat == true) {
-					
-					feat = new StringBuilder("CLUL:" + i + ":" + getVecClusterFeat(featList.get(i)) + ":" + suffix);
-					add(feat.toString(), fv);
-				}
-				if (isAVFeat == true) {
-					int temp = getAvCommon(featList.get(i));
-					if (temp >= 0){
-						if (isAVClass == true){
-							// class way
-							feat = new StringBuilder("AVL:" + i + ':' + temp + ":" + suffix);
-							add(feat.toString(), fv);
-						}else{
-							// value way
-							feat = new StringBuilder("AVL" + ":" + i + ":" + suffix);
-							add(feat.toString(), 1 + (float)temp / 10, fv);
-						}
-					}
-				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("DICL" + ":" + i + ":" + getDicFeat(splitSpace(featList.get(i))) + ":" + suffix);
-					add(feat.toString(), fv);
-				}
-				if (isPosFeat == true) {
-					List<String> results = getPosFeat(splitSpace(featList.get(i)));
-					if (results != null){
-						for (String re : results){
-							feat = new StringBuilder("POSL" + ":" + i + ":" + re + ":" + suffix);
-							add(feat.toString(), fv);
-						}
-					}
-				}
-			}
-			
-			featList = new ArrayList<String>();
-			
-			// extra feats by combining local child and head feats
-			if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
-				
-				featList.add(w + "\t" + h);
-				featList.add(wm1 + " " + w + "\t" + h);
-				featList.add(w + "\t" + hm1 + " " + h);
-				featList.add(wm2 + " " + wm1 + " " + w + "\t" + h);
-				featList.add(w + "\t" + hm2 + " " + hm1 + " " + h);
-				
-				featList.add(wm1 + " " + w + "\t" + hm1 + " " + h);
-				featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm1 + " " + h);
-				featList.add(wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
-				featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
-			
-				for (int i = 0; i < featList.size(); i++){
-					String[] feats = featList.get(i).split("\t");
-					if (isAVFeat == true) {
-						int temp = getAvCommon(feats[0]);
-						int temp1 = getAvCommon(feats[1]);
-						if (temp >= 0 || temp1 >= 0){
-							if (isAVClass == true){
-								// class way
-								feat = new StringBuilder("AVDL" + ":" + i + ":" + Math.min(temp, temp1) + ":" + suffix);
-								add(feat.toString(), fv);
-							}else{
-								// value way
-								feat = new StringBuilder("AVDL" + ":" + i + ":" + suffix);
-								add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
-							}
-						}
-					}
-					if (isDictFeat == true) {
-						feat = new StringBuilder("DICDL" + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])) + ":" + suffix);
-						add(feat.toString(), fv);
-					}
-					if (isPosFeat == true) {
-						List<String> results1 = getPosFeat(splitSpace(feats[0]));
-						List<String> results2 = getPosFeat(splitSpace(feats[1]));
-						if (results1 != null){
-							for (String re1 : results1){
-								if (results2 != null){
-									for (String re2 : results2){
-										feat = new StringBuilder("POSDL" + ":" + i + ":" + re1  + "-" + re2 + ":" + suffix);
-										add(feat.toString(), fv);
-									}
-								}else{
-									feat = new StringBuilder("POSDL" + ":" + i + ":" + re1  + "-" + "null" + ":" + suffix);
-									add(feat.toString(), fv);
-								}
-							}
-						}else{
-							if (results2 != null){
-								for (String re2 : results2){
-									feat = new StringBuilder("POSDL" + ":" + i + ":" + "null" + "-" + re2 + ":" + suffix);
-									add(feat.toString(), fv);
-								}
-							}else{
-								feat = new StringBuilder("POSDL" + ":" + i + ":" + "null" + "-" + "null" + ":" + suffix);
-								add(feat.toString(), fv);
-							}
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 						}
 					}
 				}
 			}
 		}
-<<<<<<< HEAD
 	}
 	
-=======
-
-	}
-
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	public String splitSpace(String seq) {
 		String[] toks = seq.split(" ");
 		String result = "";
@@ -1645,40 +1123,15 @@ public class DependencyPipe {
 
 		addCustomUnlabelFeats(forms, childIndex, headIndex, attDist, fv);
 
-<<<<<<< HEAD
 		if (isCONLL) {
 
-=======
-//		addTwoObsFeatures("HC", forms[headIndex], pos[headIndex],
-//				forms[childIndex], pos[childIndex], attDist, fv);
-
-		if (isCONLL) {
-
-//			addTwoObsFeatures("HCA", forms[headIndex], posA[headIndex],
-//					forms[childIndex], posA[childIndex], attDist, fv);
-//
-//			addTwoObsFeatures("HCC", instance.lemmas[headIndex],
-//					pos[headIndex], instance.lemmas[childIndex],
-//					pos[childIndex], attDist, fv);
-//
-//			addTwoObsFeatures("HCD", instance.lemmas[headIndex],
-//					posA[headIndex], instance.lemmas[childIndex],
-//					posA[childIndex], attDist, fv);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 			if (options.discourseMode) {
 				// Note: The features invoked here are designed for
 				// discourse parsing (as opposed to sentential
 				// parsing). It is conceivable that they could help for
 				// sentential parsing, but current testing indicates that
-<<<<<<< HEAD
 
-=======
-				// they hurt sentential parsing performance.
-
-				addDiscourseFeatures(instance, small, large, headIndex,
-						childIndex, attDist, fv);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 			} else {
 				// Add in features from the feature lists. It assumes
@@ -1695,14 +1148,6 @@ public class DependencyPipe {
 								instance.forms[childIndex],
 								instance.feats[childIndex][j], attDist, fv);
 
-<<<<<<< HEAD
-=======
-//						addTwoObsFeatures("LF" + i + "*" + j,
-//								instance.lemmas[headIndex],
-//								instance.feats[headIndex][i],
-//								instance.lemmas[childIndex],
-//								instance.feats[childIndex][j], attDist, fv);
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 					}
 				}
 			}
@@ -1722,124 +1167,6 @@ public class DependencyPipe {
 
 	}
 
-<<<<<<< HEAD
-=======
-	private final void addLinearFeatures(String type, String[] obsVals,
-			int first, int second, String attachDistance, FeatureVector fv) {
-
-		String pLeft = first > 0 ? obsVals[first - 1] : "STR";
-		String pRight = second < obsVals.length - 1 ? obsVals[second + 1]
-				: "END";
-		String pLeftRight = first < second - 1 ? obsVals[first + 1] : "MID";
-		String pRightLeft = second > first + 1 ? obsVals[second - 1] : "MID";
-
-		// feature posR posMid posL
-		StringBuilder featPos = new StringBuilder(type + "PC=" + obsVals[first]
-				+ " " + obsVals[second]);
-
-		for (int i = first + 1; i < second; i++) {
-			String allPos = featPos.toString() + ' ' + obsVals[i];
-			add(allPos, fv);
-			add(allPos + attachDistance, fv);
-
-		}
-
-		// addCorePosFeatures(type + "PT", pLeft, obsVals[first], pLeftRight,
-		// pRightLeft, obsVals[second],
-		// pRight, attachDistance, fv);
-		addCoreFormFeatures(type + "PT", pLeft, obsVals[first], pLeftRight,
-				pRightLeft, obsVals[second], pRight, attachDistance, fv);
-
-	}
-
-	private final void addCorePosFeatures(String prefix, String leftOf1,
-			String one, String rightOf1, String leftOf2, String two,
-			String rightOf2, String attachDistance, FeatureVector fv) {
-
-		// feature posL-1 posL posR posR+1
-
-		add(prefix + "=" + leftOf1 + " " + one + " " + two + "*"
-				+ attachDistance, fv);
-
-		StringBuilder feat = new StringBuilder(prefix + "1=" + leftOf1 + " "
-				+ one + " " + two);
-		add(feat.toString(), fv);
-		feat.append(' ').append(rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "2=" + leftOf1 + " " + two + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "3=" + leftOf1 + " " + one + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "4=" + one + " " + two + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// ///////////////////////////////////////////////////////////
-		prefix = "A" + prefix;
-
-		// feature posL posL+1 posR-1 posR
-		add(prefix + "1=" + one + " " + rightOf1 + " " + leftOf2 + "*"
-				+ attachDistance, fv);
-
-		feat = new StringBuilder(prefix + "1=" + one + " " + rightOf1 + " "
-				+ leftOf2);
-		add(feat.toString(), fv);
-		feat.append(' ').append(two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "2=" + one + " " + rightOf1 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "3=" + one + " " + leftOf2 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "4=" + rightOf1 + " " + leftOf2 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// /////////////////////////////////////////////////////////////
-		prefix = "B" + prefix;
-
-		// // feature posL-1 posL posR-1 posR
-		feat = new StringBuilder(prefix + "1=" + leftOf1 + " " + one + " "
-				+ leftOf2 + " " + two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// // feature posL posL+1 posR posR+1
-		feat = new StringBuilder(prefix + "2=" + one + " " + rightOf1 + " "
-				+ two + " " + rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-	}
-
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	/**
 	 * Add features for two items, each with two observations, e.g. head, head
 	 * pos, child, and child pos.
@@ -1922,96 +1249,6 @@ public class DependencyPipe {
 
 	}
 
-<<<<<<< HEAD
-
-=======
-	private final void addCoreFormFeatures(String prefix, String leftOf1,
-			String one, String rightOf1, String leftOf2, String two,
-			String rightOf2, String attachDistance, FeatureVector fv) {
-
-		// feature formL-1 formL formR formR+1
-
-		add(prefix + "=" + leftOf1 + " " + one + " " + two + "*"
-				+ attachDistance, fv);
-
-		StringBuilder feat = new StringBuilder(prefix + "1=" + leftOf1 + " "
-				+ one + " " + two);
-		add(feat.toString(), fv);
-		feat.append(' ').append(rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "2=" + leftOf1 + " " + two + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "3=" + leftOf1 + " " + one + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "4=" + one + " " + two + " "
-				+ rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// ///////////////////////////////////////////////////////////
-		prefix = "A" + prefix;
-
-		// feature formL formL+1 formR-1 formR
-		add(prefix + "1=" + one + " " + rightOf1 + " " + leftOf2 + "*"
-				+ attachDistance, fv);
-
-		feat = new StringBuilder(prefix + "1=" + one + " " + rightOf1 + " "
-				+ leftOf2);
-		add(feat.toString(), fv);
-		feat.append(' ').append(two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "2=" + one + " " + rightOf1 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "3=" + one + " " + leftOf2 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		feat = new StringBuilder(prefix + "4=" + rightOf1 + " " + leftOf2 + " "
-				+ two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// /////////////////////////////////////////////////////////////
-		prefix = "B" + prefix;
-
-		// // feature formL-1 formL formR-1 formR
-		feat = new StringBuilder(prefix + "1=" + leftOf1 + " " + one + " "
-				+ leftOf2 + " " + two);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-		// // feature formL formL+1 formR formR+1
-		feat = new StringBuilder(prefix + "2=" + one + " " + rightOf1 + " "
-				+ two + " " + rightOf2);
-		add(feat.toString(), fv);
-		feat.append('*').append(attachDistance);
-		add(feat.toString(), fv);
-
-	}
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 	public void addLabeledFeatures(DependencyInstance instance, int word,
 			String type, boolean attR, boolean childFeatures, FeatureVector fv) {
@@ -2033,169 +1270,17 @@ public class DependencyPipe {
 
 		att += "&" + childFeatures;
 
-<<<<<<< HEAD
-=======
-		String w = forms[word];
-		String wP = pos[word];
-
-		String wPm1 = word > 0 ? pos[word - 1] : "STR";
-		String wPp1 = word < pos.length - 1 ? pos[word + 1] : "END";
-
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 		add("NTS1=" + type + "&" + att, fv);
 		add("ANTS1=" + type, fv);
 		for (int i = 0; i < 2; i++) {
 			String suff = i < 1 ? "&" + att : "";
 			suff = "&" + type + suff;
 
-<<<<<<< HEAD
-=======
-//			add("NTH=" + w + " " + wP + suff, fv);
-//			add("NTI=" + wP + suff, fv);
-//			add("NTIA=" + wPm1 + " " + wP + suff, fv);
-//			add("NTIB=" + wP + " " + wPp1 + suff, fv);
-//			add("NTIC=" + wPm1 + " " + wP + " " + wPp1 + suff, fv);
-//			add("NTJ=" + w + suff, fv); // this
-
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 			addCustomlabelFeats(forms, heads, word, suff, fv);
 
 		}
 	}
 
-<<<<<<< HEAD
-=======
-	private void addDiscourseFeatures(DependencyInstance instance, int small,
-			int large, int headIndex, int childIndex, String attDist,
-			FeatureVector fv) {
-
-		addLinearFeatures("FORM", instance.forms, small, large, attDist, fv);
-		addLinearFeatures("LEMMA", instance.lemmas, small, large, attDist, fv);
-
-		addTwoObsFeatures("HCB1", instance.forms[headIndex],
-				instance.lemmas[headIndex], instance.forms[childIndex],
-				instance.lemmas[childIndex], attDist, fv);
-
-		addTwoObsFeatures("HCB2", instance.forms[headIndex],
-				instance.lemmas[headIndex], instance.forms[childIndex],
-				instance.postags[childIndex], attDist, fv);
-
-		addTwoObsFeatures("HCB3", instance.forms[headIndex],
-				instance.lemmas[headIndex], instance.forms[childIndex],
-				instance.cpostags[childIndex], attDist, fv);
-
-		addTwoObsFeatures("HC2", instance.forms[headIndex],
-				instance.postags[headIndex], instance.forms[childIndex],
-				instance.cpostags[childIndex], attDist, fv);
-
-		addTwoObsFeatures("HCC2", instance.lemmas[headIndex],
-				instance.postags[headIndex], instance.lemmas[childIndex],
-				instance.cpostags[childIndex], attDist, fv);
-
-		// // Use this if your extra feature lists all have the same length.
-		for (int i = 0; i < instance.feats.length; i++) {
-
-			addLinearFeatures("F" + i, instance.feats[i], small, large,
-					attDist, fv);
-
-			addTwoObsFeatures("FF" + i, instance.forms[headIndex],
-					instance.feats[i][headIndex], instance.forms[childIndex],
-					instance.feats[i][childIndex], attDist, fv);
-
-			addTwoObsFeatures("LF" + i, instance.lemmas[headIndex],
-					instance.feats[i][headIndex], instance.lemmas[childIndex],
-					instance.feats[i][childIndex], attDist, fv);
-
-			addTwoObsFeatures("PF" + i, instance.postags[headIndex],
-					instance.feats[i][headIndex], instance.postags[childIndex],
-					instance.feats[i][childIndex], attDist, fv);
-
-			addTwoObsFeatures("CPF" + i, instance.cpostags[headIndex],
-					instance.feats[i][headIndex],
-					instance.cpostags[childIndex],
-					instance.feats[i][childIndex], attDist, fv);
-
-			for (int j = i + 1; j < instance.feats.length; j++) {
-
-				addTwoObsFeatures("CPF" + i + "_" + j,
-						instance.feats[i][headIndex],
-						instance.feats[j][headIndex],
-						instance.feats[i][childIndex],
-						instance.feats[j][childIndex], attDist, fv);
-
-			}
-
-			for (int j = 0; j < instance.feats.length; j++) {
-
-				addTwoObsFeatures("XFF" + i + "_" + j,
-						instance.forms[headIndex],
-						instance.feats[i][headIndex],
-						instance.forms[childIndex],
-						instance.feats[j][childIndex], attDist, fv);
-
-				addTwoObsFeatures("XLF" + i + "_" + j,
-						instance.lemmas[headIndex],
-						instance.feats[i][headIndex],
-						instance.lemmas[childIndex],
-						instance.feats[j][childIndex], attDist, fv);
-
-				addTwoObsFeatures("XPF" + i + "_" + j,
-						instance.postags[headIndex],
-						instance.feats[i][headIndex],
-						instance.postags[childIndex],
-						instance.feats[j][childIndex], attDist, fv);
-
-				addTwoObsFeatures("XCF" + i + "_" + j,
-						instance.cpostags[headIndex],
-						instance.feats[i][headIndex],
-						instance.cpostags[childIndex],
-						instance.feats[j][childIndex], attDist, fv);
-
-			}
-
-		}
-
-		// Test out relational features
-		if (options.useRelationalFeatures) {
-
-			// for (int rf_index=0; rf_index<2; rf_index++) {
-			for (int rf_index = 0; rf_index < instance.relFeats.length; rf_index++) {
-
-				String headToChild = "H2C"
-						+ rf_index
-						+ instance.relFeats[rf_index].getFeature(headIndex,
-								childIndex);
-
-				addTwoObsFeatures("RFA1", instance.forms[headIndex],
-						instance.lemmas[headIndex],
-						instance.postags[childIndex], headToChild, attDist, fv);
-
-				addTwoObsFeatures("RFA2", instance.postags[headIndex],
-						instance.cpostags[headIndex],
-						instance.forms[childIndex], headToChild, attDist, fv);
-
-				addTwoObsFeatures("RFA3", instance.lemmas[headIndex],
-						instance.postags[headIndex],
-						instance.forms[childIndex], headToChild, attDist, fv);
-
-				addTwoObsFeatures("RFB1", headToChild,
-						instance.postags[headIndex],
-						instance.forms[childIndex],
-						instance.lemmas[childIndex], attDist, fv);
-
-				addTwoObsFeatures("RFB2", headToChild,
-						instance.forms[headIndex],
-						instance.postags[childIndex],
-						instance.cpostags[childIndex], attDist, fv);
-
-				addTwoObsFeatures("RFB3", headToChild,
-						instance.forms[headIndex], instance.lemmas[childIndex],
-						instance.postags[childIndex], attDist, fv);
-
-			}
-		}
-	}
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 
 	public void fillFeatureVectors(DependencyInstance instance,
 			FeatureVector[][][] fvs, double[][][] probs,

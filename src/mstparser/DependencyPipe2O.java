@@ -22,12 +22,9 @@ public class DependencyPipe2O extends DependencyPipe {
 		for (int i = 0; i < instanceLength; i++) {
 			if (heads[i] == -1 && i != 0)
 				continue;
+			
 			// right children
 			int prev = i;
-<<<<<<< HEAD
-//			if (prev == 0){
-=======
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 			for (int j = i + 1; j < instanceLength; j++) {
 				if (heads[j] == i) {
 					addTripFeatures(instance, i, prev, j, fv);
@@ -35,10 +32,7 @@ public class DependencyPipe2O extends DependencyPipe {
 					prev = j;
 				}
 			}
-<<<<<<< HEAD
-//			}
-=======
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
+			
 			// left children
 			prev = i;
 			for (int j = i - 1; j >= 0; j--) {
@@ -96,12 +90,8 @@ public class DependencyPipe2O extends DependencyPipe {
 		}
 	}
 
-<<<<<<< HEAD
 	private final void addSiblingFeatures(DependencyInstance instance, int ch1, int ch2, boolean isST, FeatureVector fv) {
-=======
-	private final void addSiblingFeatures(DependencyInstance instance, int ch1, int ch2,
-			boolean isST, FeatureVector fv) {
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
+
 
 		String[] forms = instance.forms;
 		String[] pos = instance.postags;
@@ -109,7 +99,6 @@ public class DependencyPipe2O extends DependencyPipe {
 		// ch1 is always the closes to par
 		String dir = ch1 > ch2 ? "RA" : "LA";
 
-<<<<<<< HEAD
 		boolean isLabeled = false;
 		String symbol = "S";
 		
@@ -130,87 +119,7 @@ public class DependencyPipe2O extends DependencyPipe {
 		}
 		
 		
-=======
-		String ch1_pos = isST ? "STPOS" : pos[ch1];
-		String ch2_pos = pos[ch2];
-		String ch1_word = isST ? "STWRD" : forms[ch1];
-		String ch2_word = forms[ch2];
 
-//		add("CH_PAIR=" + ch1_pos + "_" + ch2_pos + "_" + dir, 1.0, fv);
-//		add("CH_WPAIR=" + ch1_word + "_" + ch2_word + "_" + dir, 1.0, fv);
-//		add("CH_WPAIRA=" + ch1_word + "_" + ch2_pos + "_" + dir, 1.0, fv);
-//		add("CH_WPAIRB=" + ch1_pos + "_" + ch2_word + "_" + dir, 1.0, fv);
-//		add("ACH_PAIR=" + ch1_pos + "_" + ch2_pos, 1.0, fv);
-//		add("ACH_WPAIR=" + ch1_word + "_" + ch2_word, 1.0, fv);
-//		add("ACH_WPAIRA=" + ch1_word + "_" + ch2_pos, 1.0, fv);
-//		add("ACH_WPAIRB=" + ch1_pos + "_" + ch2_word, 1.0, fv);
-		
-		// tag
-		String startTag = "<P>";
-		String mid1Tag = "<M1>";
-		String mid2Tag = "<M2>";
-		// child 1
-		String c1 = forms[ch1];
-		String c1m1 = ch1 > ch2 + 1 ? forms[ch1 - 1] : mid2Tag;
-		String c1m2 = ch1 > ch2 + 2 ? forms[ch1 - 2] : mid2Tag;
-		String c1m3 = ch1 > ch2 + 3 ? forms[ch1 - 3] : mid2Tag;
-		String c1p1 = ch1 < forms.length - 1 ? forms[ch1 + 1] : mid1Tag;
-		String c1p2 = ch1 < forms.length - 2 ? forms[ch1 + 2] : mid1Tag;
-		String c1p3 = ch1 < forms.length - 3 ? forms[ch1 + 3] : mid1Tag;
-		// child 2
-		String c2 = forms[ch2];
-		String c2m1 = ch2 > 0 ? forms[ch2 - 1] : startTag;
-		String c2m2 = ch2 > 1 ? forms[ch2 - 2] : startTag;
-		String c2m3 = ch2 > 2 ? forms[ch2 - 3] : startTag;
-		String c2p1 = ch2 < ch1 - 1 ? forms[ch2 + 1] : mid2Tag;
-		String c2p2 = ch2 < ch1 - 2 ? forms[ch2 + 2] : mid2Tag;
-		String c2p3 = ch2 < ch1 - 3 ? forms[ch2 + 3] : mid2Tag;
-		
-		List<String> featList = new ArrayList<String>();
-		// ch1 and ch2
-		featList.add(c2 + " " + c1);
-		featList.add(c2m1 + " " + c2 + " " + c1);
-		featList.add(c2 + " " + c1m1 + " " + c1);
-		featList.add(c2m2 + " " + c2m1 + " " + c2 + " " + c1);
-		featList.add(c2 + " " + c1m2 + " " + c1m1 + " " + c1);
-		featList.add(c2m1 + " " + c2 + " " + c1m1 + " " + c1);
-		featList.add(c2m2 + " " + c2m1 + " " + c2 + " " + c1m1 + " " + c1);
-		featList.add(c2m1 + " " + c2 + " " + c1m2 + " " + c1m1 + " " + c1);
-		featList.add(c2m2 + " " + c2m1 + " " + c2 + " " + c1m2 + " " + c1m1 + " " + c1);
-		
-		for (int i = 0; i < featList.size(); i++){
-			add("FORM_SIP:" + i + ":" + featList.get(i) + "_" + dir, 1.0, fv);
-			add("AFORM_SIP:" + i + ":" + featList.get(i), 1.0, fv);
-			if (isAVFeat == true) {
-				int temp = getAvCommon(featList.get(i));
-				if (temp >= 0){
-					if (isAVClass == true){
-						// class way
-						add("AV_SIP:" + i + ':' + temp + "_" + dir, fv);
-						add("AAV_SIP:" + i + ':' + temp, fv);
-					}else{
-						// value way
-						add("AV_SIP:" + i + "_" + dir, 1 + (float)temp / 10, fv);
-						add("AAV_SIP:" + i, 1 + (float)temp / 10, fv);
-					}
-				}
-			}
-			if (isDictFeat == true) {
-				add("DIC_SIP:" + i + ":" + getDicFeat(splitSpace(featList.get(i))) + "_" + dir, 1.0, fv);
-				add("ADIC_SIP:" + i + ":" + getDicFeat(splitSpace(featList.get(i))), 1.0, fv);
-			}
-			if (isPosFeat == true) {
-				List<String> results = getPosFeat(splitSpace(featList.get(i)));
-				if (results != null){
-					for (String re : results){
-						add("POS_SIP:" + i + ":" + re  + "_" + dir, 1.0, fv);
-						add("APOS_SIP:" + i + ":" + re, 1.0, fv);
-					}
-				}
-			}
-		}
-				
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 		int dist = Math.max(ch1, ch2) - Math.min(ch1, ch2);
 		String distBool = "0";
 		if (dist > 1)
@@ -240,8 +149,7 @@ public class DependencyPipe2O extends DependencyPipe {
 
 		// ch1 is always the closest to par
 		String dir = par > ch2 ? "RA" : "LA";
-		
-<<<<<<< HEAD
+
 		String symbol = "T";
 		
 		if (par != ch1){
@@ -250,216 +158,7 @@ public class DependencyPipe2O extends DependencyPipe {
 		}
 //		List<String> featList = triFeatTemp(forms, par, ch1, ch2);
 //		addTriFeat(featList, dir, symbol, fv);
-=======
-		String startTag = "<P>";
-		String endTag = "</P>";
-		String mid1Tag = "<M1>";
-		String mid2Tag = "<M2>";
-		
-		String par_pos = pos[par];
-		String ch1_pos = ch1 == par ? "STPOS" : pos[ch1];
-		String ch2_pos = pos[ch2];
 
-		String p = forms[par];
-		String pm1 = par > 0 ? forms[par - 1] : startTag;
-		String pm2 = par > 1 ? forms[par - 2] : startTag;
-		String pp1 = par < forms.length - 1 ? forms[par + 1] : endTag;
-		String pp2 = par < forms.length - 2 ? forms[par + 2] : endTag;
-
-		String c1 = forms[ch1];
-		String c1m1 = ch1 > 0 ? forms[ch1 - 1] : startTag;
-		String c1m2 = ch1 > 1 ? forms[ch1 - 2] : startTag;
-		String c1p1 = ch1 < forms.length - 1 ? forms[ch1 + 1] : endTag;
-		String c1p2 = ch1 < forms.length - 2 ? forms[ch1 + 2] : endTag;
-
-		String c2 = forms[ch2];
-		String c2m1 = ch2 > 0 ? forms[ch2 - 1] : startTag;
-		String c2m2 = ch2 > 1 ? forms[ch2 - 2] : startTag;
-		String c2p1 = ch2 < forms.length - 1 ? forms[ch2 + 1] : endTag;
-		String c2p2 = ch2 < forms.length - 2 ? forms[ch2 + 2] : endTag;
-		
-//		String p = forms[par];
-//		String pm1 = par > ch1 + 1 ? forms[par - 1] : mid1Tag;
-//		String pm2 = par > ch1 + 2 ? forms[par - 2] : mid1Tag;
-//		String pp1 = par < forms.length - 1 ? forms[par + 1] : endTag;
-//		String pp2 = par < forms.length - 2 ? forms[par + 2] : endTag;
-//
-//		String c1 = forms[ch1];
-//		String c1m1 = ch1 > ch2 + 1 ? forms[ch1 - 1] : mid2Tag;
-//		String c1m2 = ch1 > ch2 + 2 ? forms[ch1 - 2] : mid2Tag;
-//		String c1p1 = ch1 < par - 1 ? forms[ch1 + 1] : mid1Tag;
-//		String c1p2 = ch1 < par - 2 ? forms[ch1 + 2] : mid1Tag;
-//
-//		String c2 = forms[ch2];
-//		String c2m1 = ch2 > 0 ? forms[ch2 - 1] : startTag;
-//		String c2m2 = ch2 > 1 ? forms[ch2 - 2] : startTag;
-//		String c2p1 = ch2 < ch1 - 1 ? forms[ch2 + 1] : mid2Tag;
-//		String c2p2 = ch2 < ch1 - 2 ? forms[ch2 + 2] : mid2Tag;
-
-//		String pTrip = par_pos + "_" + ch1_pos + "_" + ch2_pos;
-//		add("POS_TRIP=" + pTrip + "_" + dir, 1.0, fv);
-//		add("APOS_TRIP=" + pTrip, 1.0, fv);
-		
-		if (isAffixFeat == true){
-			add("p:" + this.getSuffixFeature(p), fv);
-			add("p:" + this.getPrefixFeature(p), fv);
-			add("c1:" + this.getSuffixFeature(c1), fv);
-			add("c1:" + this.getPrefixFeature(c1), fv);
-			add("c2:" + this.getSuffixFeature(c2), fv);
-			add("c2:" + this.getPrefixFeature(c2), fv);
-		}
-		
-		StringBuilder feat = null;
-		
-//		if (isClusterFeat == true) {
-//			feat = new StringBuilder("clu:c2c1:" + this.getCharClusterFeat(c2) + ":" + this.getCharClusterFeat(c1));
-//			add(feat.toString(), 1.0, fv);
-//			feat.append("_" + dir);
-//			add(feat.toString(), 1.0, fv);
-//			
-//			feat = new StringBuilder("clu:c2p:" + this.getCharClusterFeat(c2) + ":" + this.getCharClusterFeat(p));
-//			add(feat.toString(), 1.0, fv);
-//			feat.append("_" + dir);
-//			add(feat.toString(), 1.0, fv);
-//			
-//			feat = new StringBuilder("clu:c1p:" + this.getCharClusterFeat(c1) + ":" + this.getCharClusterFeat(p));
-//			add(feat.toString(), 1.0, fv);
-//			feat.append("_" + dir);
-//			add(feat.toString(), 1.0, fv);
-//			
-//			feat = new StringBuilder("clu:c2c1p:" + this.getCharClusterFeat(c2) + ":" + this.getCharClusterFeat(c1) + ":" + this.getCharClusterFeat(p));
-//			add(feat.toString(), 1.0, fv);
-//			feat.append("_" + dir);
-//			add(feat.toString(), 1.0, fv);
-//		}
-		
-		List<String> featList = new ArrayList<String>();
-		
-		//ch1 and par
-//		featList.add(c1 + " " + p);
-//		featList.add(c1m1 + " " + c1 + " " + p);
-//		featList.add(c1 + " " + pm1 + " " + p);
-//		featList.add(c1m1 + " " + c1 + " " + pm1 + " " + p);
-		
-		//ch2 and par
-//		featList.add(c2 + " " + p);
-//		featList.add(c1m2 + " " + c2 + " " + p);
-//		featList.add(c2 + " " + pm1 + " " + p);
-//		featList.add(c1m2 + " " + c2 + " " + pm1 + " " + p);
-		
-		// ch1, ch2 and par
-		featList.add(c2 + " " + c1 + " " + p);
-		featList.add(c2m1 + " " + c2 + " " + c1 + " " + p);
-		featList.add(c2 + " " + c1m1 + " " + c1 + " " + p);
-		featList.add(c2 + " " + c1 + " " + pm1 + " " + p);
-		featList.add(c2m1 + " " + c2 + " " + c1m1 + " " + c1 + " " + p);
-		featList.add(c2m1 + " " + c2 + " " + c1m1 + " " + c1 + " " + pm1 + " " + p);
-		
-		for (int i = 0; i < featList.size(); i++){
-			add("FORM_TRIP:" + i + ":" + featList.get(i) + "_" + dir, 1.0, fv);
-			add("AFORM_TRIP:" + i + ":" + featList.get(i), 1.0, fv);
-			if (isAVFeat == true) {
-				int temp = getAvCommon(featList.get(i));
-				if (temp >= 0){
-					if (isAVClass == true){
-						// class way
-						add("AV_TRIP:" + i + ':' + temp + "_" + dir, fv);
-						add("AAV_TRIP:" + i + ':' + temp, fv);
-					}else{
-						// value way
-						add("AV_TRIP:" + i + "_" + dir, 1 + (float)temp / 10, fv);
-						add("AAV_TRIP:" + i, 1 + (float)temp / 10, fv);
-					}
-				}
-			}
-			if (isDictFeat == true) {
-				add("DIC_TRIP:" + i + ":" + getDicFeat(splitSpace(featList.get(i))) + "_" + dir, 1.0, fv);
-				add("ADIC_TRIP:" + i + ":" + getDicFeat(splitSpace(featList.get(i))), 1.0, fv);
-			}
-			if (isPosFeat == true) {
-				List<String> results = getPosFeat(splitSpace(featList.get(i)));
-				if (results != null){
-					for (String re : results){
-						add("POS_TRIP:" + i + ":" + re  + "_" + dir, 1.0, fv);
-						add("APOS_TRIP:" + i + ":" + re, 1.0, fv);
-					}
-				}
-			}
-		}
-		
-//		featList = new ArrayList<String>();
-//		featList.add(c1 + "\t" + p);
-//		featList.add(c2 + "\t" + p);
-//		featList.add(c2 + "\t" + c1);
-//		featList.add(c1m1 + " " + c1 + "\t" + p);
-//		featList.add(c1m2 + " " + c2 + "\t" + p);
-//		featList.add(c1 + "\t" + pm1 + " " + p);
-//		featList.add(c2 + "\t" + pm1 + " " + p);
-//		featList.add(c1m1 + " " + c1 + "\t" + pm1 + " " + p);
-//		featList.add(c1m2 + " " + c2 + "\t" + pm1 + " " + p);
-//		featList.add(c2m1 + " " + c2 + "\t" + c1);
-//		featList.add(c2 + "\t" + c1m1 + " " + c1);
-//		featList.add(c2m1 + " " + c2 + "\t" + c1m1 + " " + c1);
-//		featList.add(c2 + " " + c1 + "\t" + p);
-//		featList.add(c2m1 + " " + c2 + "\t" + c1 + "\t" + p);
-//		featList.add(c2 + "\t" + c1m1 + " " + c1 + "\t" + p);
-//		featList.add(c2 + "\t" + c1 + "\t" + pm1 + " " + p);
-//		featList.add(c2m1 + " " + c2 + "\t" + c1m1 + " " + c1 + "\t" + p);
-//		featList.add(c2m1 + " " + c2 + "\t" + c1m1 + " " + c1 + "\t" + pm1 + " " + p);
-		
-//		StringBuilder feat = null;
-//		for (int i = 0; i < featList.size(); i++){
-//			String[] feats = featList.get(i).split("\t");
-//			if (isAVFeat == true) {
-//				feat = new StringBuilder("AVDL_TRIP" + ":" + i + ":" + getAvClass(feats[0]) + "-" + getAvClass(feats[1]));
-//				add(feat.toString(), 1.0, fv);
-//				feat.append("_" + dir);
-//				add(feat.toString(), 1.0, fv);
-//			}
-//			if (isDictFeat == true) {
-//				feat = new StringBuilder("DICDL_TRIP" + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])));
-//				add(feat.toString(), 1.0, fv);
-//				feat.append("_" + dir);
-//				add(feat.toString(), 1.0, fv);
-//			}
-//			if (isPosFeat == true) {
-//				List<String> results1 = getPosFeat(splitSpace(feats[0]));
-//				List<String> results2 = getPosFeat(splitSpace(feats[1]));
-//				if (results1 != null){
-//					for (String re1 : results1){
-//						if (results2 != null){
-//							for (String re2 : results2){
-//								feat = new StringBuilder("POSDL_TRIP" + ":" + i + ":" + re1  + "-" + re2);
-//								add(feat.toString(), 1.0, fv);
-//								feat.append("_" + dir);
-//								add(feat.toString(), 1.0, fv);
-//							}
-//						}else{
-//							feat = new StringBuilder("POSDL_TRIP" + ":" + i + ":" + re1  + "-" + "null");
-//							add(feat.toString(), 1.0, fv);
-//							feat.append("_" + dir);
-//							add(feat.toString(), 1.0, fv);
-//						}
-//					}
-//				}else{
-//					if (results2 != null){
-//						for (String re2 : results2){
-//							feat = new StringBuilder("POSDL_TRIP" + ":" + i + ":" + "null" + "-" + re2);
-//							add(feat.toString(), 1.0, fv);
-//							feat.append("_" + dir);
-//							add(feat.toString(), 1.0, fv);
-//						}
-//					}else{
-//						feat = new StringBuilder("POSDL_TRIP" + ":" + i + ":" + "null" + "-" + "null");
-//						add(feat.toString(), 1.0, fv);
-//						feat.append("_" + dir);
-//						add(feat.toString(), 1.0, fv);
-//					}
-//				}
-//			}
-//		}
-
->>>>>>> d71e48d7522e2e889145e2ad0b483ae917db0549
 	}
 
 	/**
