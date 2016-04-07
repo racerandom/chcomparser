@@ -1,9 +1,17 @@
 package mstparser;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility methods that may be generally useful.
@@ -36,6 +44,14 @@ public class Util {
       sb.append(sep).append(a[i]);
     return sb.toString();
   }
+  
+  public static String join(String[] a, String sep) {
+	    StringBuffer sb = new StringBuffer();
+	    sb.append(a[0]);
+	    for (int i = 1; i < a.length; i++)
+	      sb.append(sep).append(a[i]);
+	    return sb.toString();
+	  }
   
   public static String join(List<String> a, String sep) {
 	    StringBuffer sb = new StringBuffer();
@@ -71,5 +87,56 @@ public class Util {
         // Ignore
       }
     }
+  }
+  
+  public static void conll2text(String inputfile, String outputfile) {
+
+	  BufferedReader fi = null;
+	  BufferedWriter fo = null;
+	  try {
+		  fi = new BufferedReader(new FileReader(inputfile));
+		  fo = new BufferedWriter(new FileWriter(outputfile));
+		  List<String> words = new ArrayList<String>(); 
+		  StringBuilder cache = new StringBuilder();
+		  for (String line = fi.readLine(); line != null; line = fi.readLine()) {
+				line = line.trim();
+				if ((line.length() == 0) || (line.charAt(0) == '#')){
+					if (!cache.toString().isEmpty()){
+						words.add(cache.toString());
+						cache = new StringBuilder();
+					}
+					if (words.size() != 0){
+						fo.write(join(words, "  ") + '\n');
+						words = new ArrayList<String>();
+					}
+					continue;
+				}
+				List<String> toks = new ArrayList<String>(Arrays.asList(line.split("\t")));
+				if (toks.get(7).equals("WB") || toks.get(7).equals("WI")) {
+					cache.append(toks.get(1));
+				}else{
+					cache.append(toks.get(1));
+					words.add(cache.toString());
+					cache = new StringBuilder();
+				}
+		  }
+		  if (!cache.toString().isEmpty()){
+			  words.add(cache.toString());
+			  cache = new StringBuilder();
+		  }
+		  if (words.size() != 0){
+			  fo.write(join(words, "  ") + '\n');
+			  words = new ArrayList<String>();
+		  }
+	  } catch (IOException ioe) {
+		  System.out.println("FileReaderException :" + ioe.toString());
+	  } finally {
+		  try {
+			  fi.close();
+			  fo.close();
+		  } catch (IOException ioe) {
+			  System.out.println("CloseReaderException :"+ ioe.toString());
+		  }
+	  }
   }
 }

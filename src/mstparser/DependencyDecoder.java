@@ -385,7 +385,7 @@ public class DependencyDecoder {
     }
 
     // Find a cycle
-    ArrayList cycles = new ArrayList();
+    ArrayList<TIntIntHashMap> cycles = new ArrayList<TIntIntHashMap>();
     boolean[] added = new boolean[numWords];
     for (int i = 0; i < numWords && cycles.size() == 0; i++) {
       // if I have already considered this or

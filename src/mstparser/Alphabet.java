@@ -95,5 +95,13 @@ public class Alphabet implements Serializable {
     map = (gnu.trove.TObjectIntHashMap) in.readObject();
     growthStopped = in.readBoolean();
   }
-
+  
+  public String key2String(){
+	  String result = "";
+	  for (Object lab : map.keys()){
+		  result += (String)lab + ":";
+	  }
+	  return result;
+  }
+  
 }

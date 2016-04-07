@@ -10,6 +10,7 @@
             	<pathelement path="libs/trove.jar"/>
 	    		<pathelement path="libs/commons-lang3-3.3.1.jar"/>
 	        </classpath>
+            <compilerarg line="-Xlint:unchecked" />
 		</javac>
     </target>
 

@@ -401,7 +401,8 @@ public class DependencyParser {
 			int numTypes = pipe.typeAlphabet.size();
 			System.out.print("Num Feats: " + numFeats);
 			System.out.println(".\tNum Edge Labels: " + numTypes);
-
+			System.out.println(pipe.typeAlphabet.key2String());
+			
 			dp.train(instanceLengths, options.trainfile, options.trainforest);
 
 			System.out.print("---Saving model...");

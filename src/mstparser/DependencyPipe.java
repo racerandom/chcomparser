@@ -40,7 +40,7 @@ public class DependencyPipe {
 	private final ParserOptions options;
 
 	// @kevin
-	private THashMap avReMap = null;
+	private TObjectIntHashMap avReMap = null;
 
 	private THashMap posMap = null;
 
@@ -48,11 +48,11 @@ public class DependencyPipe {
 
 	private THashMap suffixMap = null;
 	
-	private THashMap charClusters = null;
+	private TObjectIntHashMap charClusters = null;
 	
-	private THashMap vecClusters = null;
+	private TObjectIntHashMap vecClusters = null;
 
-	public boolean isAVFeat = false;
+	public boolean isAVFeat = true;
 	
 	public boolean isAVClass = true;
 	
@@ -60,7 +60,7 @@ public class DependencyPipe {
 
 	public boolean isDictFeat = false;
 	
-	public boolean isPosFeat = false;
+	public boolean isPosFeat = true;
 	
 	public boolean isAffixFeat = false;
 	
@@ -82,10 +82,10 @@ public class DependencyPipe {
 				options.discourseMode);
 
 		// @kevin
-		String avFeatFile = "feats/xincmn_avfeats.out";
+		String avFeatFile = "/home/fei-c/resource/chgigaword/xincmn_avfeats.out";
 //		String clusterFeatFile = "/home/fei-c/resource/chgigaword/gigaword_class.txt";
 		String dictFile = "dicts/mecab-dic.csv";
-		String vecclusterFile = "feats/xincmn_k100.sorted";
+		String vecclusterFile = "/home/fei-c/resource/chgigaword/xincmn_k100.sorted";
 
 		if (isAVFeat == true) {
 			setAvReMap(avFeatFile);
@@ -107,7 +107,7 @@ public class DependencyPipe {
 	
 	public void setCharClusters(String clusterFile) throws IOException {
 		System.out.print("[pre]Start reading char clusters ...");
-		charClusters = new THashMap();
+		charClusters = new TObjectIntHashMap();
 
 		BufferedReader in = new BufferedReader(new FileReader(clusterFile));
 
@@ -117,7 +117,7 @@ public class DependencyPipe {
 			}
 			String[] daum = line.split(" ");
 			if (!charClusters.containsKey(daum[0]))
-				charClusters.put(daum[0], daum[1]);
+				charClusters.put(daum[0], Integer.parseInt(daum[1]));
 		}
 		in.close();
 		System.out.println("... done. size : " + charClusters.size());
@@ -126,7 +126,7 @@ public class DependencyPipe {
 	
 	public void setVecClusters(String vecclusterFile) throws IOException {
 		System.out.print("[pre]Start reading word2vec clusters ...");
-		vecClusters = new THashMap();
+		vecClusters = new TObjectIntHashMap();
 
 		BufferedReader in = new BufferedReader(new FileReader(vecclusterFile));
 
@@ -136,7 +136,7 @@ public class DependencyPipe {
 			}
 			String[] daum = line.split(" ");
 			if (!vecClusters.containsKey(daum[0]))
-				vecClusters.put(daum[0], daum[1]);
+				vecClusters.put(daum[0], Integer.parseInt(daum[1]));
 		}
 		in.close();
 		System.out.println("... done. size : " + vecClusters.size());
@@ -201,12 +201,14 @@ public class DependencyPipe {
 				String pos = daum[1].trim() + "-" + daum[2].trim() + "-"
 						+ daum[3].trim();
 				if (posMap.containsKey(key)) {
+					@SuppressWarnings("unchecked")
 					List<String> l = (List<String>)posMap.get(key);
 					if (!l.contains(pos)) {
 						l.add(pos);
 					}
 				} else {
 					posMap.put(key, new ArrayList<String>());
+					@SuppressWarnings("unchecked")
 					List<String> l = (List<String>)posMap.get(key);
 					l.add(pos);
 				}
@@ -221,7 +223,7 @@ public class DependencyPipe {
 		System.out.print("[pre]Start reading avReMap ...");
 		BufferedReader in;
 
-		this.avReMap = new THashMap();
+		this.avReMap = new TObjectIntHashMap();
 
 		in = new BufferedReader(new FileReader(avFeatFile));
 
@@ -232,9 +234,11 @@ public class DependencyPipe {
 			String[] daum = line.trim().split("\t");
 			String token = daum[0].trim();
 			if (!token.equals("") || daum.length == 3) {
-				int[] value = new int[2];
-				value[0] = Integer.valueOf(daum[1]);
-				value[1] = Integer.valueOf(daum[2]);
+//				int[] values = new int[2];
+//				values[0] = Integer.valueOf(daum[1]);
+//				values[1] = Integer.valueOf(daum[2]);
+//				this.avReMap.put(token, values);
+				int value = Math.min(Integer.parseInt(daum[1]), Integer.parseInt(daum[2]));
 				this.avReMap.put(token, value);
 			}
 		}
@@ -242,20 +246,21 @@ public class DependencyPipe {
 		System.out.println("... done. size : " + avReMap.size());
 	}
 	
-	public String getCharClusterFeat(String token) {
+	public int getCharClusterFeat(String token) {
 		if (charClusters.containsKey(token)) {
-			return (String)charClusters.get(token);
+			return charClusters.get(token);
 		} else
-			return "N";
+			return -1;
 	}
 	
-	public String getVecClusterFeat(String token) {
+	public int getVecClusterFeat(String token) {
+		//  in vec feats file: 龄问题 99, surface without 'space' delimiter
 		String[] toks = token.split(" ");
 		String retoken = StringUtils.join(toks);
 		if (vecClusters.containsKey(retoken)) {
-			return (String)vecClusters.get(token);
+			return vecClusters.get(token);
 		} else
-			return "N";
+			return -1;
 	}
 	
 	public String getClusterFeat(String token, String sep) {
@@ -292,38 +297,41 @@ public class DependencyPipe {
 	
 	public List<String> getPosFeat(String s) {
 		if (posMap.containsKey(s)) {
-			return (List<String>)posMap.get(s);
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>)posMap.get(s);
+			return list;
 		} else
 //			return null;
 			return Arrays.asList("<N>");
 	}
 	
-	public int getAvLeft(String token) {
-		 String tok_space = joinString(token, " ");
-		if (this.avReMap.containsKey(tok_space)){
-			int[] value = (int[])this.avReMap.get(tok_space);
-			return value[0];
-		}else
-			return -1;
-	}
-	
-	public int getAvRight(String token) {
-		 String tok_space = joinString(token, " ");
-		if (this.avReMap.containsKey(tok_space)){
-			int[] value = (int[])this.avReMap.get(tok_space);
-			return value[1];
-		}else
-			return -1;
-	}
+//	public int getAvLeft(String token) {
+//		 String tok_space = joinString(token, " ");
+//		if (this.avReMap.containsKey(tok_space)){
+//			int[] value = (int[])this.avReMap.get(tok_space);
+//			return value[0];
+//		}else
+//			return -1;
+//	}
+//	
+//	public int getAvRight(String token) {
+//		 String tok_space = joinString(token, " ");
+//		if (this.avReMap.containsKey(tok_space)){
+//			int[] value = (int[])this.avReMap.get(tok_space);
+//			return value[1];
+//		}else
+//			return -1;
+//	}
 	
 	public int getAvCommon(String tok_space) {
 //		String tok_space = joinString(token, " ");
 		if (this.avReMap.containsKey(tok_space)){
-			int[] value = (int[])this.avReMap.get(tok_space);
-			return Math.min(value[0], value[1]);
+//			int[] value = (int[])this.avReMap.get(tok_space);
+//			return Math.min(value[0], value[1]);
 //			System.out.print(result);
+			return this.avReMap.get(tok_space);
 		}else
-			return -1;
+			return 0;
 	}
 
 	public static String joinString(String word, String delimiter) {
@@ -543,12 +551,12 @@ public class DependencyPipe {
 		
 		addContextFeat(featList, suffix, isLabeled, symbol, fv);
 		
-		if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+		if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 			featList = extraFeatTemp(forms, headIndex, childIndex);
 			addExtraFeat(featList, suffix, isLabeled, symbol, fv);
 		}
 		
-		if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+		if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 			featList = twoFeatTemp(forms, headIndex, childIndex);
 			addDoubleFeat(featList, suffix, isLabeled, symbol, fv);
 		}
@@ -567,13 +575,13 @@ public class DependencyPipe {
 			
 			addContextFeat(featList, suffix, isLabeled, symbol, fv);
 			
-			if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+			if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 				featList = extraFeatTemp(forms, head, word);
 				addExtraFeat(featList, suffix, isLabeled, symbol, fv);
 			}
 			
 			// extra feats by combining local child and head feats
-			if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+			if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 				featList = twoFeatTemp(forms, head, word);
 				addDoubleFeat(featList, suffix, isLabeled, symbol,fv);
 			}
@@ -581,11 +589,20 @@ public class DependencyPipe {
 
 	}
 	
+	public List<String> singleFeatTemp(String[] forms, int word, List<String> featList){
+		
+		
+		
+		return null;
+	}
+	
 	public List<String> contextFeatTemp(String[] forms, int head, int word){
+		try{
 		String startTag = "<P>";
 		String endTag = "</P>";
 		String midTag = "<M>";
 		
+
 		
 		List<String> featList = new ArrayList<String>();
 
@@ -629,19 +646,31 @@ public class DependencyPipe {
 		featList.add(hm3 + " " + hm2 + " " + hm1);
 		featList.add(hp1 + " " + hp2 + " " + hp3);
 
-		// word combine head
+		// two head combine head
 		featList.add(w + "\t" + h);
 		featList.add(wm1 + " " + w + "\t" + h);
 		featList.add(w + "\t" + hm1 + " " + h);
 		featList.add(wm2 + " " + wm1 + " " + w + "\t" + h);
 		featList.add(w + "\t" + hm2 + " " + hm1 + " " + h);
 		featList.add(wm1 + " " + w + "\t" + hm1 + " " + h);
-		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm1 + " " + h);
-		featList.add(wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
-		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
-			
+//		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm1 + " " + h);
+//		featList.add(wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
+//		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
+		
 		
 		return featList;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			String line = "";
+			for (String f: forms){
+				line += f;
+			}
+			System.out.println(line);
+			System.out.println("word:" + forms[word]);
+			System.out.println("head:" + forms[head]);
+			System.out.println();
+			return null;
+		}
 	}
 	
 	public List<String> extraFeatTemp(String[] forms, int head, int word){
@@ -715,16 +744,21 @@ public class DependencyPipe {
 	public List<String> twoFeatTemp(String[] forms, int head, int word){
 		String startTag = "<P>";
 		String midTag = "<M>";
+		String endTag = "</P>";
 
 		List<String> featList = new ArrayList<String>();
 
 		String w = forms[word];
 		String wm1 = word > 0 ? forms[word - 1] : startTag;
 		String wm2 = word > 1 ? forms[word - 2] : startTag;
+		String wp1 = word < head - 1 ? forms[word + 1] : midTag;
+		String wp2 = word < head - 2 ? forms[word + 2] : midTag;
 
 		String h = forms[head];
 		String hm1 = head > word + 1 ? forms[head - 1] : midTag;
 		String hm2 = head > word + 2 ? forms[head - 2] : midTag;
+		String hp1 = head < forms.length - 1 ? forms[head + 1] : endTag;
+		String hp2 = head < forms.length - 2 ? forms[head + 2] : endTag;
 		
 		featList.add(w + "\t" + h);
 		featList.add(wm1 + " " + w + "\t" + h);
@@ -735,6 +769,13 @@ public class DependencyPipe {
 		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm1 + " " + h);
 		featList.add(wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
 		featList.add(wm2 + " " + wm1 + " " + w + "\t" + hm2 + " " + hm1 + " " + h);
+
+		// inside a word
+//		featList.add(w + "\t" + h + " " + hp1);
+//		featList.add(w + " " + wp1 + "\t" + h);
+//		featList.add(w + " " + wp1 + "\t" + h + " " + hp1);
+//		featList.add(w + " " + wp1 + "\t" + hm1 + " " + h);
+//		featList.add(wm1 + " " + w + "\t" + h + " " + hp1);
 		return featList;
 	}
 
@@ -742,18 +783,15 @@ public class DependencyPipe {
 	// add character context features
 	public void addContextFeat(List<String> featList, String suffix, boolean isLabeled, String symbol, FeatureVector fv){
 		StringBuilder feat = null;
-		if (isLabeled){
-			for (int i = 0; i < featList.size(); i++) {
-				feat = new StringBuilder("F" + symbol + ":" + i + ":" + featList.get(i) + ":" + suffix);
+		for (int i = 0; i < featList.size(); i++) {
+			
+			feat = new StringBuilder("F" + symbol + ":" + i + ":" + featList.get(i));
+			
+			if (!isLabeled)
 				add(feat.toString(), fv);
-			}
-		}else{
-			for (int i = 0; i < featList.size(); i++) {
-				feat = new StringBuilder("F" + symbol + ":" + i + ":" + featList.get(i));
-				add(feat.toString(), fv);
-				feat.append(":").append(suffix);
-				add(feat.toString(), fv);
-			}
+			
+			feat.append(":").append(suffix);
+			add(feat.toString(), fv);
 		}
 	}
 	
@@ -761,219 +799,165 @@ public class DependencyPipe {
 	public void addExtraFeat(List<String> featList, String suffix, boolean isLabeled, String symbol, FeatureVector fv){
 		
 		StringBuilder feat = null;
-		if (isLabeled){
-			for (int i = 0; i < featList.size(); i++) {
-				if (isClusterFeat == true) {
-					feat = new StringBuilder("C" + symbol + ":" + i + ":" + getVecClusterFeat(featList.get(i)) + ":" + suffix);
+		for (int i = 0; i < featList.size(); i++) {
+
+
+			if (isClusterFeat == true) {
+				int objlen = featList.get(i).split(" ").length;
+				if (objlen <= 3){
+					feat = new StringBuilder("C" + symbol + ":" + i + ":" + getVecClusterFeat(featList.get(i)));
+					if (!isLabeled)
+						add(feat.toString(), fv);
+					feat.append(":").append(suffix);
 					add(feat.toString(), fv);
-				}
-				if (isAVFeat == true) {
-					int temp = getAvCommon(featList.get(i));
-					if (temp >= 0){
-						if (isAVClass == true){
-							// class way
-							feat = new StringBuilder("A" + symbol + ":" + i + ':' + temp + ":" + suffix);
-							add(feat.toString(), fv);
-						}else{
-							// value way
-							feat = new StringBuilder("A" + symbol + ":" + i + ":" + suffix);
-							add(feat.toString(), 1 + (float)temp / 10, fv);
-						}
-					}
-				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("D" + symbol + ":" + i + ":" + getDicFeat(splitSpace(featList.get(i))) + ":" + suffix);
-					add(feat.toString(), fv);
-				}
-				if (isPosFeat == true) {
-					List<String> results = getPosFeat(splitSpace(featList.get(i)));
-					if (results != null){
-						for (String re : results){
-							feat = new StringBuilder("P" + symbol + ":" + i + ":" + re + ":" + suffix);
-							add(feat.toString(), fv);
-//							System.out.println(feat.toString());
-						}
-					}
 				}
 			}
-		}else{
-			for (int i = 0; i < featList.size(); i++) {
-				if (isClusterFeat == true) {
-					feat = new StringBuilder("C" + symbol + ":" + i + ":" + getVecClusterFeat(featList.get(i)));
-					add(feat.toString(), fv);
-					feat.append(":").append(suffix);
-					add(feat.toString(), fv);
-				}
-				if (isAVFeat == true) {
+			if (isAVFeat == true) {
+				int objlen = featList.get(i).split(" ").length;
+				if (objlen <= 4){
 					int temp = getAvCommon(featList.get(i));
-					if (temp >= 0){
-						// class way
-						if (isAVClass == true){
-							feat = new StringBuilder("A" + symbol + ":" + i + ':' + temp);
+					// class way
+					if (isAVClass == true){
+						feat = new StringBuilder("A" + symbol + ":" + i + ':' + temp);
+						if (!isLabeled)
 							add(feat.toString(), fv);
-							feat.append(':').append(suffix);
-							add(feat.toString(), fv);
-						}else{
-							// value way
-							feat = new StringBuilder("A" + symbol + ":" + i );
+						feat.append(':').append(suffix);
+						add(feat.toString(), fv);
+					}else{
+						// value way
+						feat = new StringBuilder("A" + symbol + ":" + i );
+						if (!isLabeled)
 							add(feat.toString(), 1 + (float)temp / 10, fv);
-							feat.append(":").append(suffix);
-							add(feat.toString(), 1 + (float)temp / 10, fv);
-						}
+						feat.append(":").append(suffix);
+						add(feat.toString(), 1 + (float)temp / 10, fv);
 					}
 				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("D" + symbol + ":" + i + ":" + getDicFeat(splitSpace(featList.get(i))));
+
+			}
+			if (isDictFeat == true) {
+				feat = new StringBuilder("D" + symbol + ":" + i + ":" + getDicFeat(splitSpace(featList.get(i))));
+				if (!isLabeled)
 					add(feat.toString(), fv);
+				feat.append(":").append(suffix);
+				add(feat.toString(), fv);
+			}
+			if (isPosFeat == true) {
+				List<String> results = getPosFeat(splitSpace(featList.get(i)));
+				for (String re : results){
+					feat = new StringBuilder("P" + symbol + ":" + i + ":" + re);
+					if (!isLabeled)
+						add(feat.toString(), fv);
 					feat.append(":").append(suffix);
 					add(feat.toString(), fv);
 				}
-				if (isPosFeat == true) {
-					List<String> results = getPosFeat(splitSpace(featList.get(i)));
-					for (String re : results){
-						feat = new StringBuilder("P" + symbol + ":" + i + ":" + re);
-						add(feat.toString(), fv);
-						feat.append(":").append(suffix);
-						add(feat.toString(), fv);
-					}
-						//					System.out.println();
-					
-				}
+				//					System.out.println();
+
 			}
 		}
+		
 	}
 	
 	// add extra feature with split context inputs
 	public void addDoubleFeat(List<String> featList, String suffix, boolean isLabeled, String symbol, FeatureVector fv){
 		StringBuilder feat = null;
-		if(isLabeled){
-			for (int i = 0; i < featList.size(); i++){
-				String[] feats = featList.get(i).split("\t");
-				String refeat = feats[0] + " " + feats[1];
-				if (isAVFeat) {
-					int temp = getAvCommon(feats[0]);
-					int temp1 = getAvCommon(feats[1]);
-					int reav = getAvCommon(refeat);
-					if (temp >= 0 || temp1 >= 0){
-						if (isAVClass){
-							// class way
-							if (isAVMin){
-								feat = new StringBuilder("AF" + symbol + ":" + i + ":" + reav + ":" + suffix);
-								add(feat.toString(), fv);
-								
-								feat = new StringBuilder("AD" + symbol + ":" + i + ":" + Math.min(temp, temp1) + ":" + suffix);
-								add(feat.toString(), fv);
-							}else{
-								feat = new StringBuilder("AF" + symbol + ":" + i + ":" + reav + ":" + suffix);
-								add(feat.toString(), fv);
-								
-								feat = new StringBuilder("AD" + symbol + ":" + i + ":" + temp + " " + temp1 + ":" + suffix);
-								add(feat.toString(), fv);
-							}
-//							System.out.println(temp + " " + temp1);
-						}else{
-							// value way
-							feat = new StringBuilder("AD" + symbol + ":" + i + ":" + suffix);
-							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
-						}
-					}
-				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("DF" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)) + ":" + suffix);
-					add(feat.toString(), fv);
-					
-					feat = new StringBuilder("DD" + symbol + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])) + ":" + suffix);
+
+		for (int i = 0; i < featList.size(); i++){
+			String[] feats = featList.get(i).split("\t");
+			String refeat = feats[0] + " " + feats[1];
+			if (isClusterFeat == true) {
+				int objlen = refeat.split(" ").length;
+				if (objlen <= 3){
+					feat = new StringBuilder("CBF" + symbol + ":" + i + ":" + getVecClusterFeat(refeat));
+					if (!isLabeled)
+						add(feat.toString(), fv);
+					feat.append(":").append(suffix);
 					add(feat.toString(), fv);
 				}
-				if (isPosFeat == true) {
-					List<String> results1 = getPosFeat(splitSpace(feats[0]));
-					List<String> results2 = getPosFeat(splitSpace(feats[1]));
-					
-					feat = new StringBuilder("PF" + symbol + ":" + i + ":" + getPosFeat(splitSpace(refeat)) + ":" + suffix);
-					add(feat.toString(), fv);
-					
-					for (String re1 : results1){
-						for (String re2 : results2){
-							feat = new StringBuilder("PD" + symbol + ":" + i + ":" + re1  + "-" + re2 + ":" + suffix);
-							add(feat.toString(), fv);
-						}
-					}
-					
-				}
+
+				//					feat = new StringBuilder("CBS" + symbol + ":" + i + ":" + getVecClusterFeat(feats[0]) + "-" + getVecClusterFeat(feats[1]));
+				//					add(feat.toString(), fv);
+				//					feat.append(":").append(suffix);
+				//					add(feat.toString(), fv);
 			}
-		}else{
-			for (int i = 0; i < featList.size(); i++){
-				//			System.out.println(featList.get(i));
-				String[] feats = featList.get(i).split("\t");
-				String refeat = feats[0] + " " + feats[1];
-				if (isAVFeat == true) {
-					int temp = getAvCommon(feats[0]);
-					int temp1 = getAvCommon(feats[1]);
-					int reav = getAvCommon(refeat);
-					if (temp >= 0 || temp1 >= 0){
-						if (isAVClass == true){
-							// class way
-							if (isAVMin){
-								feat = new StringBuilder("AF" + symbol + ":" + i + ":" + reav);
+			if (isAVFeat == true) {
+				int temp = getAvCommon(feats[0]);
+				int temp1 = getAvCommon(feats[1]);
+				int reav = getAvCommon(refeat);
+				if (isAVClass == true){
+					// class way
+					if (isAVMin){
+						int objlen = refeat.split(" ").length;
+						if (objlen <= 4){
+							feat = new StringBuilder("ABF" + symbol + ":" + i + ":" + reav);
+							if (!isLabeled)
 								add(feat.toString(), fv);
-								feat.append(":").append(suffix);
-								add(feat.toString(), fv);
-								
-								feat = new StringBuilder("AD" + symbol + ":" + i + ":" + Math.min(temp, temp1));
-								add(feat.toString(), fv);
-								feat.append(":").append(suffix);
-								add(feat.toString(), fv);
-							}else{
-								feat = new StringBuilder("AF" + symbol + ":" + i + ":" + reav + ":" + suffix);
-								add(feat.toString(), fv);
-								feat.append(":").append(suffix);
-								add(feat.toString(), fv);
-								
-								feat = new StringBuilder("AD" + symbol + ":" + i + ":" + temp + " " + temp1);
-								add(feat.toString(), fv);
-								feat.append(":").append(suffix);
-								add(feat.toString(), fv);
-							}
-						}else{
-							// value way
-							feat = new StringBuilder("AD" + symbol + ":" + i);
-							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
 							feat.append(":").append(suffix);
-							add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
+							add(feat.toString(), fv);
 						}
+
+						feat = new StringBuilder("ABS" + symbol + ":" + i + ":" + Math.min(temp, temp1));
+						if (!isLabeled)
+							add(feat.toString(), fv);
+						feat.append(":").append(suffix);
+						add(feat.toString(), fv);
+					}else{
+						feat = new StringBuilder("ABF" + symbol + ":" + i + ":" + reav + ":" + suffix);
+						if (!isLabeled)
+							add(feat.toString(), fv);
+						feat.append(":").append(suffix);
+						add(feat.toString(), fv);
+
+						feat = new StringBuilder("ABS" + symbol + ":" + i + ":" + temp + "-" + temp1);
+						if (!isLabeled)
+							add(feat.toString(), fv);
+						feat.append(":").append(suffix);
+						add(feat.toString(), fv);
 					}
+				}else{
+					// value way
+					feat = new StringBuilder("ABF" + symbol + ":" + i);
+					if (!isLabeled)
+						add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
+					feat.append(":").append(suffix);
+					add(feat.toString(), Math.min(1 + (float)temp / 10, 1 + (float)temp1 / 10), fv);
 				}
-				if (isDictFeat == true) {
-					feat = new StringBuilder("DF" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)));
+
+			}
+			if (isDictFeat == true) {
+				feat = new StringBuilder("DBF" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)));
+				if (!isLabeled)
 					add(feat.toString(), fv);
-					feat.append(":").append(suffix);
+				feat.append(":").append(suffix);
+				add(feat.toString(), fv);
+
+				feat = new StringBuilder("DBS" + symbol + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])));
+				if (!isLabeled)
 					add(feat.toString(), fv);
-					
-					feat = new StringBuilder("DD" + symbol + ":" + i + ":" + getDicFeat(splitSpace(feats[0])) + "-" + getDicFeat(splitSpace(feats[1])));
+				feat.append(":").append(suffix);
+				add(feat.toString(), fv);
+			}
+			if (isPosFeat == true) {
+				List<String> results1 = getPosFeat(splitSpace(feats[0]));
+				List<String> results2 = getPosFeat(splitSpace(feats[1]));
+
+				feat = new StringBuilder("PBF" + symbol + ":" + i + ":" + getPosFeat(splitSpace(refeat)));
+				if (!isLabeled)
 					add(feat.toString(), fv);
-					feat.append(":").append(suffix);
-					add(feat.toString(), fv);
-				}
-				if (isPosFeat == true) {
-					List<String> results1 = getPosFeat(splitSpace(feats[0]));
-					List<String> results2 = getPosFeat(splitSpace(feats[1]));
-					
-					feat = new StringBuilder("PF" + symbol + ":" + i + ":" + getPosFeat(splitSpace(refeat)));
-					add(feat.toString(), fv);
-					feat.append(":").append(suffix);
-					add(feat.toString(), fv);
-					
-					for (String re1 : results1){
-						for (String re2 : results2){
-							feat = new StringBuilder("PD" + symbol + ":" + i + ":" + re1  + "-" + re2);
+				feat.append(":").append(suffix);
+				add(feat.toString(), fv);
+
+				for (String re1 : results1){
+					for (String re2 : results2){
+						feat = new StringBuilder("PBS" + symbol + ":" + i + ":" + re1  + "-" + re2);
+						if (!isLabeled)
 							add(feat.toString(), fv);
-							feat.append(":").append(suffix);
-							add(feat.toString(), fv);
-						}
+						feat.append(":").append(suffix);
+						add(feat.toString(), fv);
 					}
 				}
 			}
 		}
+
 	}
 	
 	public List<String> triFeatTemp(String[] forms, int par, int ch1, int ch2){
@@ -1016,44 +1000,50 @@ public class DependencyPipe {
 			String par = feats[2];
 			String refeat = ch2 + " " + ch1 + " " + par;
 //			System.out.println(refeat);
-			add("F" + symbol + ":" + i + ":" + refeat + "_" + dir, 1.0, fv);
-			add("F" + symbol + ":" + i + ":" + refeat, 1.0, fv);
+			add("FTF" + symbol + ":" + i + ":" + refeat + "_" + dir, fv);
+			add("FTF" + symbol + ":" + i + ":" + refeat, fv);
+			if (isClusterFeat == true) {
+				int objlen = refeat.split(" ").length;
+				if (objlen <= 3){
+					add("CTF" + symbol + ":" + i + ":" + getVecClusterFeat(refeat), fv);
+					add("CTF" + symbol + ":" + i + ":" + getVecClusterFeat(refeat) + "_" + dir, fv);
+					//				add("CTS" + symbol + ":" + i + ":" + getVecClusterFeat(feats[0]) + "-" + getVecClusterFeat(feats[1]) + "-" + getVecClusterFeat(feats[2]), fv);
+					//				add("CTS" + symbol + ":" + i + ":" + getVecClusterFeat(feats[0]) + "-" + getVecClusterFeat(feats[1]) + "-" + getVecClusterFeat(feats[2]) + "_" + dir, fv);
+				}
+			}
 			if (isAVFeat == true) {
 				int temp = getAvCommon(refeat);
-//				if (temp >= 0)
-//					System.out.println(temp);
 				int avch2 = getAvCommon(ch2);
 				int avch1 = getAvCommon(ch1);
 				int avpar = getAvCommon(par);
 				int minav = Math.min(avch2, Math.min(avch1, avpar));
-				if (temp >= 0){
-					if (isAVClass == true){
-						// class way
-						add("A" + symbol + ":" + i + ':' + temp + "_" + dir, fv);
-						add("A" + symbol + ":" + i + ':' + temp, fv);
-						if (isAVMin){
-							add("AS" + symbol + ":" + i + ':' + minav + "_" + dir, fv);
-							add("AS" + symbol + ":" + i + ':' + minav, fv);
-						}else{
-							add("AS" + symbol + ":" + i + ':' + avch2 + " " + avch1 + " " + avpar + "_" + dir, fv);
-							add("AS" + symbol + ":" + i + ':' + avch2 + " " + avch1 + " " + avpar, fv);
-						}
+				if (isAVClass == true){
+					// class way
+					add("ATF" + symbol + ":" + i + ':' + temp + "_" + dir, fv);
+					add("ATF" + symbol + ":" + i + ':' + temp, fv);
+					if (isAVMin){
+						add("ATS" + symbol + ":" + i + ':' + minav + "_" + dir, fv);
+						add("ATS" + symbol + ":" + i + ':' + minav, fv);
 					}else{
-						// value way
-						add("A" + symbol + ":" + i + "_" + dir, 1 + (float)temp / 10, fv);
-						add("A" + symbol + ":" + i, 1 + (float)temp / 10, fv);
+						add("ATS" + symbol + ":" + i + ':' + avch2 + "-" + avch1 + "-" + avpar + "_" + dir, fv);
+						add("ATS" + symbol + ":" + i + ':' + avch2 + "-" + avch1 + "-" + avpar, fv);
 					}
+				}else{
+					// value way
+					add("ATF" + symbol + ":" + i + "_" + dir, 1 + (float)temp / 10, fv);
+					add("ATF" + symbol + ":" + i, 1 + (float)temp / 10, fv);
 				}
+				
 			}
 			if (isDictFeat == true) {
 				String ch2d = getDicFeat(splitSpace(ch2));
 				String ch1d = getDicFeat(splitSpace(ch1));
 				String pard = getDicFeat(splitSpace(par));
 				String outd = ch2d + " " + ch1d + " " + pard;
-				add("D" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)) + "_" + dir, 1.0, fv);
-				add("D" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)), 1.0, fv);
-				add("DS" + symbol + ":" + i + ":" + outd + "_" + dir, 1.0, fv);
-				add("DS" + symbol + ":" + i + ":" + outd, 1.0, fv);
+				add("DTF" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)) + "_" + dir, 1.0, fv);
+				add("DTF" + symbol + ":" + i + ":" + getDicFeat(splitSpace(refeat)), 1.0, fv);
+				add("DTS" + symbol + ":" + i + ":" + outd + "_" + dir, 1.0, fv);
+				add("DTS" + symbol + ":" + i + ":" + outd, 1.0, fv);
 			}
 			if (isPosFeat == true) {
 				List<String> results = getPosFeat(splitSpace(refeat));
@@ -1061,15 +1051,15 @@ public class DependencyPipe {
 				List<String> ch1p = getPosFeat(splitSpace(ch1));
 				List<String> parp = getPosFeat(splitSpace(par));
 				for (String re : results){
-					add("P" + symbol + ":" + i + ":" + re  + "_" + dir, 1.0, fv);
-					add("P" + symbol + ":" + i + ":" + re, 1.0, fv);
+					add("PTF" + symbol + ":" + i + ":" + re  + "_" + dir, 1.0, fv);
+					add("PTF" + symbol + ":" + i + ":" + re, 1.0, fv);
 				}
 				for (String re1 : ch2p){
 					for (String re2: ch1p){
 						for (String re3: parp){
 							String re = re1 + " " + re2 + " " + re3;
-							add("PS" + symbol + ":" + i + ":" + re + "_" + dir, 1.0, fv);
-							add("PS" + symbol + ":" + i + ":" + re, 1.0, fv);
+							add("PTS" + symbol + ":" + i + ":" + re + "_" + dir, 1.0, fv);
+							add("PTS" + symbol + ":" + i + ":" + re, 1.0, fv);
 
 						}
 					}

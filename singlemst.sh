@@ -8,7 +8,7 @@ output_file="${dir_tmp}/output"
 ant compile
 
 for elem in ${emu[*]}; do
-    time -p java -cp ".:bin:libs/*" -Xmx6000m mstparser.DependencyParser \
+    time -p java -d64 -Xms512m -Xmx6g -cp ".:bin:libs/*" -Xmx6000m mstparser.DependencyParser \
     train train-file:"${train_file}${elem}" model-name:"model/dep${elem}.model" \
     order:2 loss-type:nopunc decode-type:proj \
     test test-file:"${test_file}${elem}" output-file:"${output_file}${elem}" \

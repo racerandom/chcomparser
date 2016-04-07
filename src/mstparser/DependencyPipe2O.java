@@ -108,12 +108,12 @@ public class DependencyPipe2O extends DependencyPipe {
 		
 		addContextFeat(featList, dir, isLabeled, symbol, fv);
 		
-		if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+		if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 			featList = extraFeatTemp(forms, ch1, ch2);
 			addExtraFeat(featList, dir, isLabeled, symbol, fv);
 		}
 		
-		if (isAVFeat == true || isDictFeat == true || isPosFeat == true){
+		if (isAVFeat == true || isDictFeat == true || isPosFeat == true || isClusterFeat == true){
 			featList = twoFeatTemp(forms, ch1, ch2);
 			addDoubleFeat(featList, dir, isLabeled, symbol, fv);
 		}
